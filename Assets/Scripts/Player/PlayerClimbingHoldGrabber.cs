@@ -20,6 +20,7 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
     [SerializeField] float slideToHoldTime;
 
     public UnityEvent onGrabHold = new UnityEvent();
+    public UnityEvent onReleaseHold = new UnityEvent();
 
     public bool isGrabbingHold => grabbedHold != null;
     public bool hasHoldInReach => inReachHold != null;
@@ -101,6 +102,7 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
     {
         StopAllCoroutines();
         grabbedHold = null;
+        onReleaseHold.Invoke();
     }
 
     private void OnDrawGizmosSelected()

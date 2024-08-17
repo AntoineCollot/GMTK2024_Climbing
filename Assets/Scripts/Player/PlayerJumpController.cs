@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PlayerJumpController : MonoBehaviour
@@ -35,6 +36,8 @@ public class PlayerJumpController : MonoBehaviour
 
     Rigidbody body;
     Camera cam;
+
+    public UnityEvent onJump = new UnityEvent();
 
     public bool IsFalling => body.velocity.y < -0.01f;
     public float JumpForce => Mathf.Sqrt(-2f * gravity * jumpHeight) * Mathf.Lerp(smallJumpFactor, 1, jumpCharge01);
@@ -141,6 +144,7 @@ public class PlayerJumpController : MonoBehaviour
         hasPreCharged = false;
         holdGrabber.ReleaseHold();
         body.AddForce(direction * JumpForce, ForceMode.VelocityChange);
+        onJump.Invoke();
     }
 
     Vector3 GetJumpDirection()
