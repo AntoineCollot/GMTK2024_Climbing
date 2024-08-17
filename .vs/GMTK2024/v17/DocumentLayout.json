@@ -1,0 +1,136 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|D:\\Documents\\Programmation\\Unity\\GMTK2024\\assets\\scripts\\player\\playerjumpcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playerjumpcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|D:\\Documents\\Programmation\\Unity\\GMTK2024\\assets\\scripts\\player\\playerclimbingholdgrabber.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playerclimbingholdgrabber.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|d:\\documents\\programmation\\unity\\gmtk2024\\assets\\scripts\\level\\placearoundtowerhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\level\\placearoundtowerhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|d:\\documents\\programmation\\unity\\gmtk2024\\assets\\scripts\\level\\climbimghold.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\level\\climbimghold.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|D:\\Documents\\Programmation\\Unity\\GMTK2024\\assets\\scripts\\level\\tower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\level\\tower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|D:\\Documents\\Programmation\\Unity\\GMTK2024\\assets\\scripts\\player\\playersticktotower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\playersticktotower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|D:\\Documents\\Programmation\\Unity\\GMTK2024\\assets\\scripts\\camera\\cameratargets.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8F1156FB-4491-F105-1B93-CD204EADB59F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\camera\\cameratargets.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PlaceAroundTowerHelper.cs",
+              "DocumentMoniker": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Level\\PlaceAroundTowerHelper.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Level\\PlaceAroundTowerHelper.cs",
+              "ToolTip": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Level\\PlaceAroundTowerHelper.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Level\\PlaceAroundTowerHelper.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAABFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-16T22:51:19.301Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PlayerClimbingHoldGrabber.cs",
+              "DocumentMoniker": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Player\\PlayerClimbingHoldGrabber.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\PlayerClimbingHoldGrabber.cs",
+              "ToolTip": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Player\\PlayerClimbingHoldGrabber.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Player\\PlayerClimbingHoldGrabber.cs",
+              "ViewState": "AQIAAEUAAAAAAAAAAADwv2UAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-16T22:23:26.037Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ClimbimgHold.cs",
+              "DocumentMoniker": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Level\\ClimbimgHold.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Level\\ClimbimgHold.cs",
+              "ToolTip": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Level\\ClimbimgHold.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Level\\ClimbimgHold.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-16T22:22:19.443Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CameraTargets.cs",
+              "DocumentMoniker": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Camera\\CameraTargets.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Camera\\CameraTargets.cs",
+              "ToolTip": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Camera\\CameraTargets.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Camera\\CameraTargets.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-16T19:48:26.572Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Tower.cs",
+              "DocumentMoniker": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Level\\Tower.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Level\\Tower.cs",
+              "ToolTip": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Level\\Tower.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Level\\Tower.cs",
+              "ViewState": "AQIAABcAAAAAAAAAAADgvzkAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-16T19:33:12.593Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PlayerStickToTower.cs",
+              "DocumentMoniker": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Player\\PlayerStickToTower.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\PlayerStickToTower.cs",
+              "ToolTip": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Player\\PlayerStickToTower.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Player\\PlayerStickToTower.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABMAAAAHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-16T19:27:25.682Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PlayerJumpController.cs",
+              "DocumentMoniker": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Player\\PlayerJumpController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Player\\PlayerJumpController.cs",
+              "ToolTip": "D:\\Documents\\Programmation\\Unity\\GMTK2024\\Assets\\Scripts\\Player\\PlayerJumpController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Player\\PlayerJumpController.cs",
+              "ViewState": "AQIAAF0AAAAAAAAAAAAAAHgAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-16T18:40:20.475Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
