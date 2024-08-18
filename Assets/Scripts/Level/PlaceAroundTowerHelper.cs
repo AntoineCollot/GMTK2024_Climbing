@@ -7,7 +7,8 @@ public class PlaceAroundTowerHelper : MonoBehaviour
 {
 #if UNITY_EDITOR
     Tower tower;
-    [SerializeField] float distFromCenter;
+    [SerializeField] float distFromCenter = 0.5f;
+    [SerializeField] bool inverseLookAt;
 
     void Start()
     {
@@ -22,12 +23,17 @@ public class PlaceAroundTowerHelper : MonoBehaviour
 
     void UpdatePos()
     {
+        if (transform.position == Vector3.zero)
+            return;
         if (tower == null)
             tower = FindObjectOfType<Tower>();
 
         transform.position = tower.GetPositionAtDistance(transform.position, distFromCenter);
 
-        transform.LookAt(tower.GetTowerCenter(transform.position.y));
+        Vector3 lookAt = tower.GetTowerCenter(transform.position.y);
+        if (inverseLookAt)
+            lookAt = transform.position * 2 - lookAt;
+        transform.LookAt(lookAt);
     }
 
     private void OnValidate()

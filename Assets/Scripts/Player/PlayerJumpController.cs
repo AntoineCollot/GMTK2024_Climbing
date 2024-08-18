@@ -16,13 +16,8 @@ public class PlayerJumpController : MonoBehaviour
     [SerializeField, Range(0.2f, 2)] float timeToJumpApex = 0.5f;
 
     [SerializeField] float fullChargeTime;
-    [SerializeField] float minChargeTime;
     float jumpCharge01;
-    float preJumpTime01;
-    InputMap inputs;
-
-    bool isChargingJump;
-    bool hasPreCharged;
+    public bool isChargingJump { get; private set; }
 
     [Header("Fall")]
     [SerializeField] float gravityScale = 3.5f;
@@ -34,6 +29,7 @@ public class PlayerJumpController : MonoBehaviour
 
     PlayerClimbingHoldGrabber holdGrabber;
 
+    InputMap inputs;
     Rigidbody body;
     Camera cam;
 
@@ -100,7 +96,7 @@ public class PlayerJumpController : MonoBehaviour
         ReleaseJump();
     }
 
-    private void OnGrabHold()
+    private void OnGrabHold(ClimbimgHold hold)
     {
         body.velocity = Vector3.zero;
     }
@@ -109,19 +105,7 @@ public class PlayerJumpController : MonoBehaviour
     {
         body.velocity = Vector3.zero;
 
-        hasPreCharged = false;
-        preJumpTime01 = 0;
         jumpCharge01 = 0;
-        //while (preJumpTime01 < 1)
-        //{
-        //    preJumpTime01 += Time.deltaTime / minChargeTime;
-        //    yield return null;
-        //}
-
-        //hasPreCharged = true;
-        ////Add the overshoot of pre charge time
-        //jumpCharge01 = ((preJumpTime01 - 1) * minChargeTime) / fullChargeTime;
-        hasPreCharged = true;
         while (jumpCharge01 < 1)
         {
             jumpCharge01 += Time.deltaTime / fullChargeTime;
@@ -134,14 +118,12 @@ public class PlayerJumpController : MonoBehaviour
         StopAllCoroutines();
         isChargingJump = false;
 
-        if (hasPreCharged)
-            Jump(GetJumpDirection());
+        Jump(GetJumpDirection());
     }
 
     void Jump(Vector3 direction)
     {
         isChargingJump = false;
-        hasPreCharged = false;
         holdGrabber.ReleaseHold();
         body.AddForce(direction * JumpForce, ForceMode.VelocityChange);
         onJump.Invoke();
@@ -162,21 +144,9 @@ public class PlayerJumpController : MonoBehaviour
             return Vector3.up;
         }
 
-        // Vector2 playerPosVS = cam.WorldToViewportPoint(transform.position);
-        // Vector2 mousePosVS = cam.ScreenToViewportPoint(Mouse.current.position.ReadValue());
-
         // return (mousePosVS - playerPosVS).normalized;
         return (raycastPoint - transform.position).normalized;
     }
-
-    //Vector3 ConvertJumpDirToWorld(Vector2 dir)
-    //{
-    //    //Vertical force component
-    //    Vector3 worldJumpDir = Vector3.up * dir.y;
-    //    //Horizontal force component
-    //    worldJumpDir += Tower.Instance.GetTangeant(transform.position) * dir.x;
-    //    return worldJumpDir;
-    //}
 
     private void OnDrawGizmos()
     {
@@ -190,14 +160,8 @@ public class PlayerJumpController : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(Tower.Instance.GetPositionAtDistance(transform.position, 0.47f), 0.1f);
             Vector3 dir = GetJumpDirection();
-            if (hasPreCharged)
-            {
-                Gizmos.color = Color.blue;
-            }
-            else
-            {
-                Gizmos.color = Color.red;
-            }
+
+            Gizmos.color = Color.blue;
             Gizmos.DrawRay(transform.position, dir);
             Gizmos.DrawSphere(transform.position, 0.1f * jumpCharge01);
         }

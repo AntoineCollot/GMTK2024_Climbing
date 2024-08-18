@@ -10,7 +10,8 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
     InputMap inputs;
 
     [Header("Grab")]
-    [SerializeField] Transform grabOrigin;
+    [SerializeField] Transform grabDetectionOrigin;
+    const float GRAB_Y_OFFSET = 0.075f;
     [SerializeField] float grabRange;
     [SerializeField] LayerMask grabLayerMask;
     ClimbimgHold inReachHold;
@@ -19,11 +20,14 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
     [Header("Move")]
     [SerializeField] float slideToHoldTime;
 
-    public UnityEvent onGrabHold = new UnityEvent();
-    public UnityEvent onReleaseHold = new UnityEvent();
+    public class HoldEvent : UnityEvent<ClimbimgHold> { }
+    public HoldEvent onGrabHold = new HoldEvent();
+    public HoldEvent onReleaseHold = new HoldEvent();
 
     public bool isGrabbingHold => grabbedHold != null;
     public bool hasHoldInReach => inReachHold != null;
+
+    public Vector3 GrabPosition => transform.position + Vector3.up * GRAB_Y_OFFSET;
 
     // Start is called before the first frame update
     void Start()
@@ -42,16 +46,16 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
 
     void Update()
     {
-        Collider[] colliders = Physics.OverlapSphere(grabOrigin.position, grabRange, grabLayerMask);
+        Collider[] colliders = Physics.OverlapSphere(grabDetectionOrigin.position, grabRange, grabLayerMask);
         inReachHold = null;
 
         //Find the closest hold
         float minDist = Mathf.Infinity;
         foreach (Collider collider in colliders)
         {
-            if(collider.TryGetComponent(out ClimbimgHold hold))
+            if (collider.TryGetComponent(out ClimbimgHold hold))
             {
-                float dist = hold.DistanceFrom(grabOrigin.position);
+                float dist = hold.DistanceFrom(GrabPosition);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -66,7 +70,7 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
         if (isGrabbingHold)
             return;
 
-        if(hasHoldInReach)
+        if (hasHoldInReach)
         {
             GrabHold(inReachHold);
         }
@@ -78,22 +82,23 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
             return;
 
         grabbedHold = hold;
+        grabbedHold.Grabbed(GrabPosition);
         StartCoroutine(MoveToHold(hold));
 
-        onGrabHold.Invoke();
+        onGrabHold.Invoke(hold);
     }
 
     IEnumerator MoveToHold(ClimbimgHold hold)
     {
         float t = 0;
-        Vector3 offset = transform.position - grabOrigin.position;
-        Vector3 startPosition = grabOrigin.position;
+        Vector3 startPosition = GrabPosition;
+        Vector3 offset = transform.position - startPosition;
         Vector3 holdPosition = hold.GetGrabPosition(startPosition);
-        while (t<1 && isGrabbingHold)
+        while (t < 1 && isGrabbingHold)
         {
             t += Time.deltaTime / slideToHoldTime;
 
-            transform.position = Curves.QuadEaseInOut(startPosition, holdPosition, Mathf.Clamp01(t))+ offset;
+            transform.position = Curves.QuadEaseInOut(startPosition, holdPosition, Mathf.Clamp01(t)) + offset;
             yield return null;
         }
     }
@@ -101,8 +106,13 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
     public void ReleaseHold()
     {
         StopAllCoroutines();
+        ClimbimgHold hold = grabbedHold;
         grabbedHold = null;
-        onReleaseHold.Invoke();
+        if (hold != null)
+        {
+            hold.Released();
+            onReleaseHold.Invoke(hold);
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -111,6 +121,6 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
             Gizmos.color = Color.blue;
         else
             Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(grabOrigin.position, grabRange);
+        Gizmos.DrawWireSphere(GrabPosition, grabRange);
     }
 }
