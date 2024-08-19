@@ -11,7 +11,9 @@ public class PlayerJumpController : MonoBehaviour
     [SerializeField, Range(0, 1)] float smallJumpFactor = 0.3f;
     [SerializeField, Range(0.5f, 5)] float jumpHeight = 0.5f;
     [SerializeField, Range(0.2f, 2)] float timeToJumpApex = 0.5f;
+    [SerializeField, Range(0, 1)] float sideJumpFactor = 0.5f;
 
+    [Header("Charge")]
     [SerializeField] float fullChargeTime;
     public float jumpCharge01 { get; private set; }
     public bool isChargingJump { get; private set; }
@@ -141,14 +143,15 @@ public class PlayerJumpController : MonoBehaviour
     {
         isChargingJump = false;
         holdGrabber.ReleaseHold();
-        body.AddForce(direction * JumpForce, ForceMode.VelocityChange);
+        Vector3 force = CombineJumpDirAndForce(in direction, JumpForce);
+        body.AddForce(force, ForceMode.VelocityChange);
         onJump.Invoke();
     }
 
     public Vector3 GetJumpDirection()
     {
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Plane plane = Tower.Instance.GetPlaneOfPosition(transform.position);
+        Plane plane = Tower.GetPlaneOfPosition(transform.position);
         Vector3 raycastPoint;
         if (plane.Raycast(ray, out float distance))
         {
@@ -169,6 +172,16 @@ public class PlayerJumpController : MonoBehaviour
         return Mathf.Sqrt(-2f * gravity * jumpHeight) * Mathf.Lerp(smallJumpFactor, 1, jumpCharge01);
     }
 
+    Vector3 CombineJumpDirAndForce(in Vector3 jumpDirection, float jumpForce)
+    {
+        //How much are we going horizontal
+        float horizontalAmount = 1 - Mathf.Abs(Vector3.Dot(jumpDirection, Vector3.up));
+        horizontalAmount = Mathf.Clamp01(horizontalAmount.Remap(0.1f, 0.7f, 0, 1));
+        //Reduce the force based on horizontal amount
+        jumpForce *= Mathf.Lerp(1, sideJumpFactor, horizontalAmount);
+        return jumpDirection * jumpForce;
+    }
+
     float ComputeGravity()
     {
         //Compute the gravityscale to get the correct jump duration
@@ -184,7 +197,7 @@ public class PlayerJumpController : MonoBehaviour
     {
         //Init velocity from jump
         float gravity = ComputeGravity();
-        Vector3 velocity = jumpDirection * GetJumpForce(gravity, jumpCharge01);
+        Vector3 velocity = CombineJumpDirAndForce(in jumpDirection,GetJumpForce(gravity, jumpCharge01));
         Vector3 position = origin;
 
         Vector3[] positions = new Vector3[samples];

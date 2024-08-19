@@ -28,15 +28,15 @@ public class PlayerStickToTower : MonoBehaviour
     private void LateUpdate()
     {
         //Move the player to the correct distance from center
-        transform.position = Tower.Instance.GetPositionAtDistance(transform.position,distanceFromCenter);
+        transform.position = Tower.GetPositionAtDistance(transform.position,distanceFromCenter);
     }
 
     public void ComputePositionAndVelocity(ref Vector3 position, ref Vector3 velocity)
     {
         //Move the player to the correct distance from center
-        Vector3 newPos = Tower.Instance.GetPositionAtDistance(position, distanceFromCenter);
+        Vector3 newPos = Tower.GetPositionAtDistance(position, distanceFromCenter);
 
-        Vector3 projectedVelocity = Vector3.ProjectOnPlane(velocity, Tower.Instance.GetDirectionFromCenter(position));
+        Vector3 projectedVelocity = Vector3.ProjectOnPlane(velocity, Tower.GetDirectionFromCenter(position));
         projectedVelocity.Normalize();
 
         //Apply the same magnitude along the plane

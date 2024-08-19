@@ -22,7 +22,7 @@ public class CameraTargets : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        Vector3 towerCenter = Tower.Instance.GetTowerCenter(player.position.y);
+        Vector3 towerCenter = Tower.GetTowerCenter(player.position.y);
 
         //Look at
         lookAtTarget.position = towerCenter;

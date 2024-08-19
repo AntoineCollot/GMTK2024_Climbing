@@ -80,7 +80,7 @@ public class PlayerAnims : MonoBehaviour
         //bool isLeft = Vector3.Cross(toHoldPos, model.right).y > 0;
         Vector3 hVelocity = lastVelocity;
         hVelocity.y = 0;
-        bool isLeft = Vector3.Cross(hVelocity, Tower.Instance.GetDirectionFromCenter(transform.position)).y < 0;
+        bool isLeft = Vector3.Cross(hVelocity, Tower.GetDirectionFromCenter(transform.position)).y < 0;
         if (isLeft)
             anim.SetFloat("GrabDirection", -1);
         else
@@ -104,7 +104,7 @@ public class PlayerAnims : MonoBehaviour
 
     void UpdateLookAtDirection()
     {
-        Vector3 lookAtPos = Tower.Instance.GetTowerCenter(model.position.y);
+        Vector3 lookAtPos = Tower.GetTowerCenter(model.position.y);
 
         lookAtOffsetAngle = Mathf.SmoothDamp(lookAtOffsetAngle, targetLookAtAngle, ref refLookAtOffsetAngle, lookAtAngleSmooth);
         lookAtPos = RotatePointAroundPivot(lookAtPos, jumpController.transform.position, Vector3.up * lookAtOffsetAngle);
@@ -119,7 +119,7 @@ public class PlayerAnims : MonoBehaviour
         while (jumpController.isChargingJump)
         {
             Vector3 jumpDirection = jumpController.GetJumpDirection();
-            bool isJumpingRight = Vector3.Dot(jumpDirection, Tower.Instance.GetTangeant(jumpController.transform.position)) > 0;
+            bool isJumpingRight = Vector3.Dot(jumpDirection, Tower.GetTangeant(jumpController.transform.position)) > 0;
 
             //remap the dot to reach max faster
             float amount = (Mathf.Abs(Vector3.Dot(jumpDirection, Vector3.up)) - 0.66f) * 3;

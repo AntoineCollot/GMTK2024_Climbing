@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class TowerSegment : MonoBehaviour
 {
+    public BiomeType biome;
+    public int floor { get; private set; }
+
+    public void Init(int floor)
+    {
+        this.floor = floor;
+    }
 
 #if UNITY_EDITOR
-    const string SOURCE_NAME ="Items";
-    const string MIRROR_NAME ="Mirror";
+    const string SOURCE_NAME = "Items";
+    const string MIRROR_NAME = "Mirror";
     [ContextMenu("Mirror")]
     public void Mirror()
     {
@@ -20,7 +27,7 @@ public class TowerSegment : MonoBehaviour
                 DestroyImmediate(child.gameObject);
         }
 
-        if(source == null)
+        if (source == null)
         {
             Debug.LogError($"No child matching name {SOURCE_NAME} to mirror");
             return;

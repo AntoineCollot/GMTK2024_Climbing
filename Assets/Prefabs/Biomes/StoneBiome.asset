@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c6324c90d0c8540bc5cfc30f8524a8, type: 3}
+  m_Name: StoneBiome
+  m_EditorClassIdentifier: 
+  type: 0
+  minFloor: 0
+  maxFloor: 0
+  towerSegments:
+  - {fileID: 1432947520538161754, guid: d65bc7ac2cd46d447bcd163a71aaf83e, type: 3}
+  - {fileID: 7561749469954896535, guid: f4100bfe752a8144b87d9425448e07e7, type: 3}
+  - {fileID: 6347474096341342263, guid: 02642232004cb124f9abea8aa8531421, type: 3}
+  - {fileID: 6760205359418005551, guid: 3b95b220723d0fc4a8a6081f62b1c5ce, type: 3}
+  - {fileID: 7199084863019158013, guid: 1f17f8176c7d41645a384f642c55b1b3, type: 3}

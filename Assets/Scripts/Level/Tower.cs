@@ -6,36 +6,26 @@ public class Tower : MonoBehaviour
 {
     public static Tower Instance;
 
+    public const int FLOOR_HEIGHT = 2;
+
     private void Awake()
     {
         Instance = this;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public Vector3 GetTowerCenter(float altitude)
+    public static Vector3 GetTowerCenter(float altitude)
     {
         return Vector3.up * altitude;
     }
 
-    public Vector3 GetDirectionFromCenter(Vector3 pos)
+    public static Vector3 GetDirectionFromCenter(Vector3 pos)
     {
         pos = pos - GetTowerCenter(pos.y);
         pos.y = 0;
         return pos.normalized;
     }
 
-    public Vector3 GetPositionAtDistance(Vector3 pos, float distance)
+    public static Vector3 GetPositionAtDistance(Vector3 pos, float distance)
     {
         Vector3 center = GetTowerCenter(pos.y);
         Vector3 toPos = pos - center;
@@ -44,12 +34,12 @@ public class Tower : MonoBehaviour
         return center + toPos * distance;
     }
 
-    public Vector3 GetTangeant(Vector3 pos)
+    public static Vector3 GetTangeant(Vector3 pos)
     {
         return Vector3.Cross(GetDirectionFromCenter(pos), Vector3.up);
     }
 
-    public Plane GetPlaneOfPosition(Vector3 pos)
+    public static Plane GetPlaneOfPosition(Vector3 pos)
     {
         Vector3 planePoint = pos;
         Vector3 planeNormal = GetDirectionFromCenter(pos);

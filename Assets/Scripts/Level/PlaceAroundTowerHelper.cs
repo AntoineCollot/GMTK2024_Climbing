@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [ExecuteInEditMode]
 public class PlaceAroundTowerHelper : MonoBehaviour
@@ -30,9 +33,9 @@ public class PlaceAroundTowerHelper : MonoBehaviour
         if (tower == null)
             tower = FindObjectOfType<Tower>();
 
-        transform.position = tower.GetPositionAtDistance(transform.position, distFromCenter);
+        transform.position = Tower.GetPositionAtDistance(transform.position, distFromCenter);
 
-        Vector3 lookAt = tower.GetTowerCenter(transform.position.y);
+        Vector3 lookAt = Tower.GetTowerCenter(transform.position.y);
         if (inverseLookAt)
             lookAt = transform.position * 2 - lookAt;
         transform.LookAt(lookAt);
@@ -44,3 +47,24 @@ public class PlaceAroundTowerHelper : MonoBehaviour
     }
 #endif
 }
+#if UNITY_EDITOR
+[CustomEditor(typeof(PlaceAroundTowerHelper))]
+[CanEditMultipleObjects]
+public class PlaceAroundTowerHelperEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        PlaceAroundTowerHelper helper = (PlaceAroundTowerHelper)target;
+        if (!helper.gameObject.scene.IsValid())
+            return;
+
+        GUILayout.Space(10);
+        GUILayout.Label("Placement", EditorStyles.boldLabel);
+        float angle = Vector3.SignedAngle(Tower.GetDirectionFromCenter(helper.transform.position), Vector3.forward,Vector3.up)+180;
+        GUILayout.Label($"Angle : {angle.ToString("N1")}");
+        GUILayout.Label($"Height : {helper.transform.position.y.ToString("N1")}");
+    }
+}
+#endif
