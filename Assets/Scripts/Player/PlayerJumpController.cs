@@ -8,9 +8,6 @@ using UnityEngine.InputSystem;
 public class PlayerJumpController : MonoBehaviour
 {
     [Header("Jump")]
-    [SerializeField] float minJumpForce;
-    [SerializeField] float maxJumpForce;
-
     [SerializeField, Range(0, 1)] float smallJumpFactor = 0.3f;
     [SerializeField, Range(0.5f, 5)] float jumpHeight = 0.5f;
     [SerializeField, Range(0.2f, 2)] float timeToJumpApex = 0.5f;
@@ -24,7 +21,7 @@ public class PlayerJumpController : MonoBehaviour
     float gravityMult = 1;
     float gravity;
     [SerializeField] float fallingGravityMultiplier = 1;
-    [SerializeField] float maxFallSpeed;
+    public float maxFallSpeed;
     [SerializeField, Range(0, 1f)] float drag;
 
     PlayerClimbingHoldGrabber holdGrabber;
@@ -148,7 +145,7 @@ public class PlayerJumpController : MonoBehaviour
         onJump.Invoke();
     }
 
-    Vector3 GetJumpDirection()
+    public Vector3 GetJumpDirection()
     {
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
         Plane plane = Tower.Instance.GetPlaneOfPosition(transform.position);
