@@ -1,5 +1,7 @@
+ 
 #ifdef SHADERGRAPH_PREVIEW
 #else
+	#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"  
 half3 GetAdditionalLightColor(float3 Normal, float3 WPos, out half Intensity)
 {
 	Light addLight = GetAdditionalLight(0, WPos, 1);

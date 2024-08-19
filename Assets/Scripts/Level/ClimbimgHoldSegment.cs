@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClimbimgHoldSegment : ClimbimgHold
+public class ClimbimgHoldSegment : ClimbingHold
 {
     [SerializeField] float segmentYOffset;
     [SerializeField] float segmentWidth;
@@ -21,7 +21,7 @@ public class ClimbimgHoldSegment : ClimbimgHold
         Vector3 AP = point - segmentA;       //Vector from A to P   
         Vector3 AB = segmentB - segmentA;       //Vector from A to B  
 
-        float ABAPproduct = Vector2.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b     
+        float ABAPproduct = Vector3.Dot(AP, AB);    //The DOT product of a_to_p and a_to_b     
         float distance = ABAPproduct / AB.sqrMagnitude; //The normalized "distance" from a to your closest point  
 
         if (distance < 0)     //Check if P projection is over vectorAB     

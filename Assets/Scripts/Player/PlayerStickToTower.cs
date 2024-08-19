@@ -16,15 +16,13 @@ public class PlayerStickToTower : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Move the player to the correct distance from center
-        body.MovePosition(Tower.Instance.GetPositionAtDistance(transform.position,distanceFromCenter));
+        Vector3 velocity = body.velocity;
+        Vector3 position = body.position;
 
-       // Plane plane = Tower.Instance.GetPlaneOfPosition(transform.position, distanceFromCenter);
-        Vector3 projectedVelocity = Vector3.ProjectOnPlane(body.velocity, Tower.Instance.GetDirectionFromCenter(body.position));
-        projectedVelocity.Normalize();
+        ComputePositionAndVelocity(ref position, ref velocity);
 
-        //Apply the same magnitude along the plane
-        body.velocity = projectedVelocity * body.velocity.magnitude;
+        body.position = position;
+        body.velocity = velocity;
     }
 
     private void LateUpdate()
@@ -33,8 +31,16 @@ public class PlayerStickToTower : MonoBehaviour
         transform.position = Tower.Instance.GetPositionAtDistance(transform.position,distanceFromCenter);
     }
 
-    private void Update()
+    public void ComputePositionAndVelocity(ref Vector3 position, ref Vector3 velocity)
     {
-        //Visualy Rotate
+        //Move the player to the correct distance from center
+        Vector3 newPos = Tower.Instance.GetPositionAtDistance(position, distanceFromCenter);
+
+        Vector3 projectedVelocity = Vector3.ProjectOnPlane(velocity, Tower.Instance.GetDirectionFromCenter(position));
+        projectedVelocity.Normalize();
+
+        //Apply the same magnitude along the plane
+        velocity = projectedVelocity * velocity.magnitude;
+        position = newPos;
     }
 }

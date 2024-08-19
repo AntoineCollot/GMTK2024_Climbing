@@ -14,6 +14,7 @@ public class PlayerAnims : MonoBehaviour
     PlayerClimbingHoldGrabber holdGrabber;
     bool isChargingJumpAnim;
 
+    Vector3 lastVelocity;
     Rigidbody body;
 
     // Start is called before the first frame update
@@ -40,16 +41,21 @@ public class PlayerAnims : MonoBehaviour
         }
     }
 
-    private void OnReleaseHold(ClimbimgHold hold)
+    private void LateUpdate()
+    {
+        lastVelocity = body.velocity;
+    }
+
+    private void OnReleaseHold(ClimbingHold hold)
     {
         anim.SetBool("IsGrabbing", false);
     }
 
-    private void OnGrabHold(ClimbimgHold hold)
+    private void OnGrabHold(ClimbingHold hold)
     {
         //Vector3 toHoldPos = hold.grabbedPosition - holdGrabber.GrabPosition;
         //bool isLeft = Vector3.Cross(toHoldPos, model.right).y > 0;
-        Vector3 hVelocity = body.velocity;
+        Vector3 hVelocity = lastVelocity;
         hVelocity.y = 0;
         bool isLeft = Vector3.Cross(hVelocity, Tower.Instance.GetDirectionFromCenter(transform.position)).y < 0;
         if (isLeft)

@@ -23,6 +23,8 @@ public class PlaceAroundTowerHelper : MonoBehaviour
 
     void UpdatePos()
     {
+        if (!gameObject.scene.IsValid())
+            return;
         if (transform.position == Vector3.zero)
             return;
         if (tower == null)

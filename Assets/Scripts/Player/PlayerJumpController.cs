@@ -16,7 +16,7 @@ public class PlayerJumpController : MonoBehaviour
     [SerializeField, Range(0.2f, 2)] float timeToJumpApex = 0.5f;
 
     [SerializeField] float fullChargeTime;
-    float jumpCharge01;
+    public float jumpCharge01 { get; private set; }
     public bool isChargingJump { get; private set; }
 
     [Header("Fall")]
@@ -28,20 +28,24 @@ public class PlayerJumpController : MonoBehaviour
     [SerializeField, Range(0, 1f)] float drag;
 
     PlayerClimbingHoldGrabber holdGrabber;
+    PlayerStickToTower stickToTower;
 
     InputMap inputs;
     Rigidbody body;
     Camera cam;
 
+    public UnityEvent onStartChargingJump = new UnityEvent();
     public UnityEvent onJump = new UnityEvent();
 
     public bool IsFalling => body.velocity.y < -0.01f;
-    public float JumpForce => Mathf.Sqrt(-2f * gravity * jumpHeight) * Mathf.Lerp(smallJumpFactor, 1, jumpCharge01);
+    public float JumpForce => GetJumpForce(gravity, jumpCharge01);
+    public float DragFactor => 1 - drag * Time.fixedDeltaTime;
 
     // Start is called before the first frame update
     void Start()
     {
         holdGrabber = GetComponentInChildren<PlayerClimbingHoldGrabber>();
+        stickToTower = GetComponentInChildren<PlayerStickToTower>();
         holdGrabber.onGrabHold.AddListener(OnGrabHold);
         body = GetComponent<Rigidbody>();
         cam = Camera.main;
@@ -66,8 +70,7 @@ public class PlayerJumpController : MonoBehaviour
         if (isChargingJump || holdGrabber.isGrabbingHold)
             return;
 
-        //Compute the gravityscale to get the correct jump duration
-        gravity = (-2 * jumpHeight) / (timeToJumpApex * timeToJumpApex * gravityScale);
+        gravity = ComputeGravity();
         if (IsFalling)
             gravityMult = fallingGravityMultiplier;
         else
@@ -76,27 +79,43 @@ public class PlayerJumpController : MonoBehaviour
 
         //Drag horizontal only (to not mess up jump height)
         Vector3 velocity = body.velocity;
-        // float dragFactor = Mathf.Pow(1f - drag * Time.fixedDeltaTime, Time.fixedDeltaTime);
-        float dragFactor = 1 - drag * Time.fixedDeltaTime;
-        velocity.x *= dragFactor;
+        velocity.x *= DragFactor;
 
         //Clamp falling velocity
         velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
         body.velocity = velocity;
     }
 
+#if UNITY_EDITOR
+    public bool alwaysAllowJump;
+#endif
     private void JumpPerformed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        bool canJump = holdGrabber.isGrabbingHold;
+#if UNITY_EDITOR
+        if (alwaysAllowJump)
+            canJump = true;
+#endif
+        if (canJump)
+        {
+            StartChargingJump();
+        }
+    }
+
+    void StartChargingJump()
     {
         isChargingJump = true;
         StartCoroutine(ChargeJump());
+        onStartChargingJump.Invoke();
     }
 
     private void JumpReleased(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        ReleaseJump();
+        if (isChargingJump)
+            ReleaseJump();
     }
 
-    private void OnGrabHold(ClimbimgHold hold)
+    private void OnGrabHold(ClimbingHold hold)
     {
         body.velocity = Vector3.zero;
     }
@@ -148,22 +167,114 @@ public class PlayerJumpController : MonoBehaviour
         return (raycastPoint - transform.position).normalized;
     }
 
-    private void OnDrawGizmos()
+    float GetJumpForce(float gravity, float jumpCharge01)
     {
-        if (Tower.Instance == null)
-            return;
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawRay(transform.position, Tower.Instance.GetTangeant(transform.position));
+        return Mathf.Sqrt(-2f * gravity * jumpHeight) * Mathf.Lerp(smallJumpFactor, 1, jumpCharge01);
+    }
 
-        if (isChargingJump)
+    float ComputeGravity()
+    {
+        //Compute the gravityscale to get the correct jump duration
+        return (-2 * jumpHeight) / (timeToJumpApex * timeToJumpApex * gravityScale);
+    }
+
+    public Vector3[] PreComputeJumpPositions(int samples, float distanceBetweenSamples)
+    {
+        return PreComputeJumpPositions(samples, distanceBetweenSamples, transform.position, GetJumpDirection(), jumpCharge01, Time.fixedDeltaTime);
+    }
+
+    Vector3[] PreComputeJumpPositions(int samples, float distanceBetweenSamples, Vector3 origin, Vector3 jumpDirection, float jumpCharge01, float deltaTime)
+    {
+        //Init velocity from jump
+        float gravity = ComputeGravity();
+        Vector3 velocity = jumpDirection * GetJumpForce(gravity, jumpCharge01);
+        Vector3 position = origin;
+
+        Vector3[] positions = new Vector3[samples];
+        int positionID = 0;
+        float distanceTraveledFromLastSample = 0;
+
+        //Loop for all frames
+        float gravityMult;
+        while (positionID < samples)
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(Tower.Instance.GetPositionAtDistance(transform.position, 0.47f), 0.1f);
-            Vector3 dir = GetJumpDirection();
+            Vector3 nextPos = position;
+            if (velocity.y < -0.01f)
+                gravityMult = fallingGravityMultiplier;
+            else
+                gravityMult = 1;
 
-            Gizmos.color = Color.blue;
-            Gizmos.DrawRay(transform.position, dir);
-            Gizmos.DrawSphere(transform.position, 0.1f * jumpCharge01);
+            //Apply force to velocity
+            velocity += (Vector3.up * gravity * gravityMult) * deltaTime;
+
+            velocity.x *= DragFactor;
+            velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
+
+            nextPos += velocity * deltaTime;
+
+            //Stick to tower
+            stickToTower.ComputePositionAndVelocity(ref nextPos, ref velocity);
+
+            float newDistanceTraveled = distanceTraveledFromLastSample + Vector3.Distance(position, nextPos);
+
+            if (newDistanceTraveled > distanceBetweenSamples)
+            {
+                //Lerp between frames for precision
+                positions[positionID] = Vector3.Lerp(position, nextPos, Mathf.InverseLerp(distanceTraveledFromLastSample, newDistanceTraveled, distanceBetweenSamples));
+                positionID++;
+
+                newDistanceTraveled -= distanceBetweenSamples;
+            }
+            distanceTraveledFromLastSample = newDistanceTraveled;
+            position = nextPos;
+        }
+
+        return positions;
+    }
+
+#if UNITY_EDITOR
+    //private void OnDrawGizmos()
+    //{
+    //    if (Tower.Instance == null)
+    //        return;
+    //    Gizmos.color = Color.yellow;
+    //    Gizmos.DrawRay(transform.position, Tower.Instance.GetTangeant(transform.position));
+
+    //    if (isChargingJump)
+    //    {
+    //        Gizmos.color = Color.yellow;
+    //        Gizmos.DrawSphere(Tower.Instance.GetPositionAtDistance(transform.position, 0.47f), 0.1f);
+    //        Vector3 dir = GetJumpDirection();
+
+    //        Gizmos.color = Color.blue;
+    //        Gizmos.DrawRay(transform.position, dir);
+    //        Gizmos.DrawSphere(transform.position, 0.1f * jumpCharge01);
+    //    }
+    //}
+
+    Vector3[] preComputedPosDebug;
+    public int debugMaxSamples;
+    public float debugInterval = 0.05f;
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!Application.isPlaying)
+            return;
+
+        int samples = Mathf.FloorToInt(Mathf.Lerp(0, debugMaxSamples, jumpCharge01));
+        if (!holdGrabber.isGrabbingHold || !isChargingJump)
+            return;
+        preComputedPosDebug = PreComputeJumpPositions(debugMaxSamples, debugInterval, transform.position, GetJumpDirection(), jumpCharge01, 0.01f);
+        if (preComputedPosDebug != null)
+        {
+            samples = Mathf.Min(samples, preComputedPosDebug.Length);
+            for (int i = 0; i < samples; i++)
+            {
+                float t = (float)(i + 1) / debugMaxSamples;
+                Gizmos.color = Color.Lerp(Color.yellow, Color.red, t);
+                Gizmos.DrawSphere(preComputedPosDebug[i], Mathf.Lerp(0.008f, 0.013f, t));
+            }
         }
     }
+#endif
 }
