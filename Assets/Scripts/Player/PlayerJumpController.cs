@@ -68,7 +68,7 @@ public class PlayerJumpController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isChargingJump || holdGrabber.isGrabbingHold)
+        if (isChargingJump || holdGrabber.isGrabbingHold || !GameManager.Instance.GameIsPlaying)
             return;
 
         gravity = ComputeGravity();
@@ -111,6 +111,9 @@ public class PlayerJumpController : MonoBehaviour
 #endif
     private void JumpPerformed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        if (!GameManager.Instance.GameIsPlaying)
+            return;
+
         bool canJump = holdGrabber.isGrabbingHold;
 #if UNITY_EDITOR
         if (alwaysAllowJump)
@@ -219,11 +222,11 @@ public class PlayerJumpController : MonoBehaviour
         enableWindForNextFrame = true;
     }
 
-    static Vector3 ComputeNewVelocity(Vector3 velocity, Vector3 position, bool isFalling, float gravity, float fallingGravityMultiplier,float maxFallSpeed, float drag,float windStrength, bool enableWind, float deltaTime)
+    static Vector3 ComputeNewVelocity(Vector3 velocity, Vector3 position, bool isFalling, float gravity, float fallingGravityMultiplier, float maxFallSpeed, float drag, float windStrength, bool enableWind, float deltaTime)
     {
         float gravityMult;
         if (isFalling)
-             gravityMult = fallingGravityMultiplier;
+            gravityMult = fallingGravityMultiplier;
         else
             gravityMult = 1;
 
@@ -258,7 +261,7 @@ public class PlayerJumpController : MonoBehaviour
     {
         //Init velocity from jump
         float gravity = ComputeGravity();
-        Vector3 velocity = CombineJumpDirAndForce(in jumpDirection,GetJumpForce(gravity, jumpCharge01));
+        Vector3 velocity = CombineJumpDirAndForce(in jumpDirection, GetJumpForce(gravity, jumpCharge01));
         Vector3 position = origin;
 
         Vector3[] positions = new Vector3[samples];

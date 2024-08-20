@@ -27,9 +27,15 @@ public class StartClimb : MonoBehaviour
     IEnumerator StartClimbingAnim()
     {
         GameManager.Instance.isInCutscene = true;
+        holdGrabber.gameObject.SetActive(true);
         //Place player
         holdGrabber.transform.position = playerInitPosition.position;
+        holdGrabber.transform.rotation = playerInitPosition.rotation;
         holdGrabber.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+        yield return new WaitForSeconds(2);
+
+        holdGrabber.GetComponentInChildren<Animator>().SetTrigger("PickUpRock");
 
         //Pick up rock anim
         yield return new WaitForSeconds(2);

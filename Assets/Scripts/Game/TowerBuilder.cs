@@ -8,11 +8,11 @@ public class TowerBuilder : MonoBehaviour
     Dictionary<BiomeType, Biome> biomes;
     List<TowerSegment> spawnedSegments = new List<TowerSegment>();
 
+    public float nextFloorRotation { get; private set; }
     //Current
-    BiomeType currentBiome;
-    int floorsInCurrentBiome;
-    int totalFloors;
-
+    public BiomeType currentBiome { get; private set; }
+    public int floorsInCurrentBiome { get; private set; }
+    public int totalFloors {  get; private set; }
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +22,10 @@ public class TowerBuilder : MonoBehaviour
         {
             biomes.Add(biomeSources[i].type, biomeSources[i]);
         }
+
+        currentBiome = BiomeType.Stone;
+        totalFloors = 1;
+        nextFloorRotation = 0;
     }
 
     // Update is called once per frame
@@ -51,7 +55,7 @@ public class TowerBuilder : MonoBehaviour
         }
     }
 
-    void SpawnSegment(TowerSegment segment)
+    public void SpawnSegment(TowerSegment segment)
     {
         //If stay in biome
         if (segment.biome == currentBiome)
@@ -68,7 +72,8 @@ public class TowerBuilder : MonoBehaviour
         //Instantiate
         TowerSegment newSegment = Instantiate(segment, transform);
         newSegment.transform.position = Tower.GetTowerCenter(totalFloors * Tower.FLOOR_HEIGHT);
-        newSegment.transform.localRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
+        newSegment.transform.localRotation = Quaternion.Euler(0, nextFloorRotation, 0);
+        nextFloorRotation = Random.Range(0f, 360f);
         newSegment.Init(totalFloors);
         spawnedSegments.Add(newSegment);
 

@@ -27,6 +27,7 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
 
     [Header("Move")]
     [SerializeField] float slideToHoldTime;
+    [SerializeField] ClimbingHold firstHold;
 
     public class HoldEvent : UnityEvent<ClimbingHold> { }
     public HoldEvent onGrabHold = new HoldEvent();
@@ -56,6 +57,9 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.Instance.GameIsPlaying)
+            return;
+
         Collider[] colliders = Physics.OverlapSphere(grabDetectionOrigin.position, grabRange, grabLayerMask);
         ClimbingHold newHoveredHold = null;
 
@@ -85,11 +89,14 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
 
         disabledGrabRemainingTime -= Time.deltaTime;
         playerOutlineMat.SetFloat("_OutlineWidth", Curves.QuartEaseIn(OUTLINE_WIDTH, 0, 1-Mathf.Clamp01(disabledGrabRemainingTime / MAX_DISABLED_TIME)));
+
+        if (transform.position.y <= 0.07f)
+            GrabHold(firstHold);
     }
 
     private void CatchPerformed(InputAction.CallbackContext context)
     {
-        if (isGrabbingHold || !CanGrab)
+        if (isGrabbingHold || !CanGrab || !GameManager.Instance.GameIsPlaying)
             return;
 
         if (hasHoldInReach)
