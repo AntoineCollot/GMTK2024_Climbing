@@ -20,11 +20,14 @@ public class PlayerJumpController : MonoBehaviour
 
     [Header("Fall")]
     [SerializeField] float gravityScale = 3.5f;
-    float gravityMult = 1;
     float gravity;
     [SerializeField] float fallingGravityMultiplier = 1;
     public float maxFallSpeed;
     [SerializeField, Range(0, 1f)] float drag;
+
+    [Header("Wind")]
+    [SerializeField] float windStrength;
+    bool enableWindForNextFrame;
 
     PlayerClimbingHoldGrabber holdGrabber;
     PlayerStickToTower stickToTower;
@@ -38,7 +41,6 @@ public class PlayerJumpController : MonoBehaviour
 
     public bool IsFalling => body.velocity.y < -0.01f;
     public float JumpForce => GetJumpForce(gravity, jumpCharge01);
-    public float DragFactor => 1 - drag * Time.fixedDeltaTime;
 
     // Start is called before the first frame update
     void Start()
@@ -70,19 +72,38 @@ public class PlayerJumpController : MonoBehaviour
             return;
 
         gravity = ComputeGravity();
-        if (IsFalling)
-            gravityMult = fallingGravityMultiplier;
-        else
-            gravityMult = 1;
-        body.AddForce(Vector3.up * gravity * gravityMult, ForceMode.Acceleration);
+        //if (IsFalling)
+        //    gravityMult = fallingGravityMultiplier;
+        //else
+        //    gravityMult = 1;
+        //body.AddForce(Vector3.up * gravity * gravityMult, ForceMode.Acceleration);
 
-        //Drag horizontal only (to not mess up jump height)
-        Vector3 velocity = body.velocity;
-        velocity.x *= DragFactor;
+        //Vector3 velocity = body.velocity;
 
-        //Clamp falling velocity
-        velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
-        body.velocity = velocity;
+        ////Add wind velocity
+        //if (enableWindForNextFrame)
+        //{
+        //    //Add most wind if not already moving in this direction, to avoid wind snowballing
+        //    Vector3 windDir = -Tower.GetTangeant(body.position);
+        //    Vector3 velocityByWind = velocity;
+        //    if (velocityByWind.y < 0)
+        //        velocityByWind.y = 0;
+
+        //    float alreadyInWind = Mathf.Clamp01(Vector3.Dot(windDir, velocityByWind.normalized));
+        //    velocityByWind.y = 0;
+        //    alreadyInWind *= velocityByWind.magnitude;
+        //    velocity += windDir * Mathf.Lerp(windStrength, windStrength * 0.35f, alreadyInWind) * Time.fixedDeltaTime;
+        //    enableWindForNextFrame = false;
+        //}
+
+        ////Drag horizontal only (to not mess up jump height)
+        //velocity.x *= DragFactor;
+        //velocity.z *= DragFactor;
+
+        ////Clamp falling velocity
+        //velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
+        body.velocity = ComputeNewVelocity(body.velocity, body.position, IsFalling, gravity, fallingGravityMultiplier, maxFallSpeed, drag, windStrength, enableWindForNextFrame, Time.fixedDeltaTime);
+        enableWindForNextFrame = false;
     }
 
 #if UNITY_EDITOR
@@ -193,6 +214,46 @@ public class PlayerJumpController : MonoBehaviour
         return PreComputeJumpPositions(samples, distanceBetweenSamples, transform.position, GetJumpDirection(), jumpCharge01, Time.fixedDeltaTime);
     }
 
+    public void EnableWindForNextFrame()
+    {
+        enableWindForNextFrame = true;
+    }
+
+    static Vector3 ComputeNewVelocity(Vector3 velocity, Vector3 position, bool isFalling, float gravity, float fallingGravityMultiplier,float maxFallSpeed, float drag,float windStrength, bool enableWind, float deltaTime)
+    {
+        float gravityMult;
+        if (isFalling)
+             gravityMult = fallingGravityMultiplier;
+        else
+            gravityMult = 1;
+
+        velocity += Vector3.up * gravity * gravityMult * deltaTime;
+
+        //Add wind velocity
+        if (enableWind)
+        {
+            //Add most wind if not already moving in this direction, to avoid wind snowballing
+            Vector3 windDir = -Tower.GetTangeant(position);
+            Vector3 velocityByWind = velocity;
+            if (velocityByWind.y < 0)
+                velocityByWind.y = 0;
+
+            float alreadyInWind = Mathf.Clamp01(Vector3.Dot(windDir, velocityByWind.normalized));
+            velocityByWind.y = 0;
+            alreadyInWind *= velocityByWind.magnitude;
+            velocity += windDir * Mathf.Lerp(windStrength, windStrength * 0.35f, alreadyInWind) * Time.fixedDeltaTime;
+        }
+
+        //Drag horizontal only (to not mess up jump height)
+        velocity.x *= 1 - drag * Time.fixedDeltaTime;
+        velocity.z *= 1 - drag * Time.fixedDeltaTime;
+
+        //Clamp falling velocity
+        velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
+
+        return velocity;
+    }
+
     Vector3[] PreComputeJumpPositions(int samples, float distanceBetweenSamples, Vector3 origin, Vector3 jumpDirection, float jumpCharge01, float deltaTime)
     {
         //Init velocity from jump
@@ -205,21 +266,11 @@ public class PlayerJumpController : MonoBehaviour
         float distanceTraveledFromLastSample = 0;
 
         //Loop for all frames
-        float gravityMult;
         while (positionID < samples)
         {
             Vector3 nextPos = position;
-            if (velocity.y < -0.01f)
-                gravityMult = fallingGravityMultiplier;
-            else
-                gravityMult = 1;
 
-            //Apply force to velocity
-            velocity += (Vector3.up * gravity * gravityMult) * deltaTime;
-
-            velocity.x *= DragFactor;
-            velocity.y = Mathf.Max(velocity.y, -maxFallSpeed);
-
+            velocity = ComputeNewVelocity(velocity, nextPos, velocity.y < -0.01f, gravity, fallingGravityMultiplier, maxFallSpeed, drag, windStrength, enableWindForNextFrame, deltaTime);
             nextPos += velocity * deltaTime;
 
             //Stick to tower

@@ -15,7 +15,7 @@ half3 GetAdditionalLightColor(float3 Normal, float3 WPos, out half Intensity)
 half3 _ShadowColor;
 half3 _GlossinessColor;
 #define COOKIE_TILING 0.05
-void ToonShading_float(in float3 Normal, in float3 ClipSpacePos, in float3 WorldPos, in float3 ViewDir,in float Glossiness, out float3 ToonRampOutput)
+void ToonShading_float(in float3 Normal, in float3 ClipSpacePos, in float3 WorldPos, in float3 ViewDir,in float Glossiness,float ToonRamp, out float3 ToonRampOutput)
 {
 
 	// set the shader graph node previews
@@ -49,7 +49,7 @@ void ToonShading_float(in float3 Normal, in float3 ClipSpacePos, in float3 World
 
 	//Light
 	half NdotL = dot(Normal, light.direction);
-	half lightIntensity = smoothstep(0, 0.03, NdotL * light.shadowAttenuation);
+	half lightIntensity = smoothstep(0, ToonRamp, NdotL * light.shadowAttenuation);
 	half3 lightTint = lerp(_ShadowColor, light.color, saturate(lightIntensity));
 
 	//Specular

@@ -4,6 +4,7 @@ Properties {
 	_Glossiness("Glossiness", Range(0,1)) = 0
 	_GlossinessTex ("Glossiness Texture", 2D) = "black" {}
 	_Tint("tint", Color) = (1,1,1,1)
+	_ToonRamp("Toon Ramp", Range(0,0.2)) = 0.03
 	_WriteStencil ("Stencil ID", Float) = 0
 	_WriteMask ("Stencil WriteMask", Float) = 255
 }
@@ -58,6 +59,7 @@ SubShader {
 
 			half4 _Tint;
 			half _Glossiness;
+			half _ToonRamp;
 
 			TEXTURE2D(_MainTex);
 			SAMPLER(sampler_MainTex);
@@ -86,10 +88,10 @@ SubShader {
 				//Glossiness
 				half glossiness = SAMPLE_TEXTURE2D(_GlossinessTex, sampler_GlossinessTex, IN.uv).r + _Glossiness;
 				
-				ToonShading_float(IN.normal,IN.positionHCS,IN.WorldPos,viewDir,glossiness,toonOutput);
+				ToonShading_float(IN.normal,IN.positionHCS,IN.WorldPos,viewDir,glossiness,_ToonRamp,toonOutput);
 				color.rgb *= toonOutput;
 				
-                return color;
+                return color*_Tint;
             }
             ENDHLSL
         }

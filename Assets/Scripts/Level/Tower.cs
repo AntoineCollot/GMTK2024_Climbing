@@ -13,6 +13,11 @@ public class Tower : MonoBehaviour
         Instance = this;
     }
 
+    public static int GetFloorOfAltitude(float altitude)
+    {
+        return Mathf.FloorToInt(altitude / FLOOR_HEIGHT);
+    }
+
     public static Vector3 GetTowerCenter(float altitude)
     {
         return Vector3.up * altitude;

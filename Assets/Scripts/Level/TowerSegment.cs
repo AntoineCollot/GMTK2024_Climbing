@@ -6,10 +6,20 @@ public class TowerSegment : MonoBehaviour
 {
     public BiomeType biome;
     public int floor { get; private set; }
+    bool isInit;
+
+    private void Start()
+    {
+        if (!isInit)
+        {
+            floor = Tower.GetFloorOfAltitude(transform.position.y);
+        }
+    }
 
     public void Init(int floor)
     {
         this.floor = floor;
+        isInit = true;
     }
 
 #if UNITY_EDITOR

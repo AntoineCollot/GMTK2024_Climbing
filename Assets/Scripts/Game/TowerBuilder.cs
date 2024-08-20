@@ -13,22 +13,22 @@ public class TowerBuilder : MonoBehaviour
     int floorsInCurrentBiome;
     int totalFloors;
 
-  
 
     // Start is called before the first frame update
     void Start()
     {
+        biomes = new();
         for (int i = 0; i < biomeSources.Length; i++)
         {
             biomes.Add(biomeSources[i].type, biomeSources[i]);
         }
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        GenerateInfinite();
+        if (GameManager.Instance.playMode == GameManager.PlayMode.Infinite)
+            GenerateInfinite();
         DisableFarSegments();
     }
 
@@ -44,7 +44,7 @@ public class TowerBuilder : MonoBehaviour
 
     void GenerateInfinite()
     {
-        if (GameManager.Instance.PlayerCurrentFloor > (totalFloors - 1))
+        if (GameManager.Instance.PlayerCurrentFloor >= (totalFloors - 1))
         {
             TowerSegment segment = GetSegmentPossibilities(currentBiome, totalFloors, floorsInCurrentBiome, 1)[0];
             SpawnSegment(segment);
@@ -68,6 +68,7 @@ public class TowerBuilder : MonoBehaviour
         //Instantiate
         TowerSegment newSegment = Instantiate(segment, transform);
         newSegment.transform.position = Tower.GetTowerCenter(totalFloors * Tower.FLOOR_HEIGHT);
+        newSegment.transform.localRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
         newSegment.Init(totalFloors);
         spawnedSegments.Add(newSegment);
 

@@ -100,7 +100,7 @@ public class PlayerClimbingHoldGrabber : MonoBehaviour
             FailGrab();
     }
 
-    void GrabHold(ClimbingHold hold)
+    public void GrabHold(ClimbingHold hold)
     {
         if (hold == grabbedHold || hold == null)
             return;
